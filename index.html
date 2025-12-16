@@ -1,16 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
-  <title>RAJU ENTERPRISES</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body{font-family:Arial;margin:0;background:#f5f5f5}
-    header{background:#2e7d32;color:white;text-align:center;padding:15px}
-    .products{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
-    .card{background:white;padding:10px;border-radius:10px;text-align:center}
-    .card img{width:100px;height:100px}
-    button{background:#2e7d32;color:white;border:none;padding:8px 15px;border-radius:5px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAJU ENTERPRISES</title>
+
+<style>
+body{font-family:Arial;margin:0;background:#f5f5f5}
+header{background:#2e7d32;color:#fff;text-align:center;padding:15px}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
+.card{background:#fff;padding:10px;border-radius:10px;text-align:center}
+.card img{width:100px;height:100px}
+button{background:#2e7d32;color:#fff;border:none;padding:8px 12px;border-radius:5px}
+.cart{background:#fff;margin:10px;padding:10px;border-radius:10px}
+.pay-btn{display:block;background:#ff6f00;color:#fff;text-align:center;
+padding:12px;border-radius:8px;text-decoration:none;font-weight:bold;margin-top:10px}
+.history{background:#fff;margin:10px;padding:10px;border-radius:10px}
+</style>
 </head>
 
 <body>
@@ -22,27 +28,70 @@
 </header>
 
 <div class="products">
+
   <div class="card">
     <img src="atta.jpg">
     <h4>Aata 5kg</h4>
     <p>₹250</p>
-    <button>Add</button>
+    <button onclick="addItem('Aata 5kg',250)">Add</button>
   </div>
 
   <div class="card">
     <img src="rice.jpg">
     <h4>Rice 5kg</h4>
     <p>₹300</p>
-    <button>Add</button>
+    <button onclick="addItem('Rice 5kg',300)">Add</button>
   </div>
 
   <div class="card">
     <img src="oil.jpg">
     <h4>Oil 1L</h4>
     <p>₹180</p>
-    <button>Add</button>
+    <button onclick="addItem('Oil 1L',180)">Add</button>
   </div>
+
 </div>
 
+<div class="cart">
+  <h3>Total: ₹<span id="total">0</span></h3>
+
+  <a class="pay-btn"
+     href="upi://pay?pa=96316991969631@ibl&pn=RAJU%20ENTERPRISES&cu=INR">
+     Pay via UPI
+  </a>
+</div>
+
+<div class="history">
+  <h3>My Order History</h3>
+  <button onclick="showHistory()">Show Orders</button>
+  <div id="history"></div>
+</div>
+
+<script>
+let total = 0;
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+function addItem(name, price){
+  total += price;
+  document.getElementById("total").innerText = total;
+
+  orders.push({
+    item:name,
+    price:price,
+    time:new Date().toLocaleString()
+  });
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+}
+
+function showHistory(){
+  let html = "";
+  orders.forEach(o=>{
+    html += o.item + " - ₹" + o.price + " (" + o.time + ")<br>";
+  });
+  document.getElementById("history").innerHTML = html || "No orders yet";
+}
+</script>
+
 </body>
-</html>
+  </html>
