@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Raju Enterprises Grocery</title>
 
 <link rel="manifest" href="manifest.json">
@@ -10,115 +10,171 @@
 
 <style>
 body{margin:0;font-family:Arial;background:#f2f2f2}
-header{background:#2e7d32;color:#fff;padding:15px;text-align:center;font-size:20px}
+header{
+  background:#2e7d32;color:#fff;
+  text-align:center;padding:15px
+}
+header img{
+  width:90px;height:90px;
+  border-radius:50%;
+  border:3px solid #fff;
+  object-fit:cover
+}
 
-.section{background:#fff;margin:15px;padding:15px;border-radius:12px}
-.section input,.section textarea{width:100%;padding:8px;margin-bottom:8px;border-radius:6px;border:1px solid #ccc}
+.section{
+  background:#fff;
+  margin:12px;
+  padding:12px;
+  border-radius:10px
+}
+.section input,.section textarea{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border-radius:6px;
+  border:1px solid #ccc
+}
 
-.container{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;padding:15px}
-.card{background:#fff;border-radius:12px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.1)}
-.card img{width:100%;height:120px;object-fit:contain}
-.card h3{margin:8px 0 4px}
-.card p{margin:5px 0;font-weight:bold}
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:12px
+}
+.card{
+  background:#fff;
+  padding:10px;
+  border-radius:12px;
+  text-align:center;
+  box-shadow:0 2px 6px rgba(0,0,0,.1)
+}
+.card img{
+  width:100%;
+  height:130px;
+  object-fit:contain
+}
+.card button{
+  background:#2e7d32;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px
+}
 
-button{background:#2e7d32;color:#fff;border:none;padding:8px 15px;border-radius:6px;cursor:pointer}
+.total{
+  font-size:20px;
+  font-weight:bold;
+  padding:10px
+}
 
-.footer{position:sticky;bottom:0;background:#fff;padding:15px;box-shadow:0 -2px 6px rgba(0,0,0,.1)}
-.total{font-size:18px;font-weight:bold;margin-bottom:10px}
-.upi{background:#ff9800;width:100%;margin-bottom:8px}
-.wa{background:#25d366;width:100%}
+.pay{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  margin:6px 0
+}
+.upi{background:orange;color:#fff}
+.wa{background:#25D366;color:#fff}
 </style>
 </head>
 
 <body>
 
 <header>
-RAJU ENTERPRISES<br>
-Grocery Store · Pincode 122051
+  <img src="profile.jpg">
+  <h2>RAJU ENTERPRISES</h2>
+  <p>Grocery Store · Pincode 122051</p>
 </header>
 
 <div class="section">
-<h3>Customer Details</h3>
-<input id="cname" placeholder="Customer Name">
-<input id="cmobile" placeholder="Mobile Number">
-<textarea id="caddress" placeholder="Address"></textarea>
+  <h3>Customer Details</h3>
+  <input id="cname" placeholder="Customer Name">
+  <input id="cmobile" placeholder="Mobile Number">
+  <textarea id="caddress" placeholder="Full Address"></textarea>
 </div>
 
-<div class="container">
-  <div class="card">
-    <img src="https://i.imgur.com/5ZQZ5ZQ.png">
-    <h3>Aata 5kg</h3>
-    <p>₹250</p>
-    <button onclick="addItem('Aata 5kg',250)">Add</button>
-  </div>
+<div class="section">
+  <h3>Products</h3>
+  <div class="products">
 
-  <div class="card">
-    <img src="https://i.imgur.com/Vx1cQZ6.png">
-    <h3>Rice 5kg</h3>
-    <p>₹300</p>
-    <button onclick="addItem('Rice 5kg',300)">Add</button>
-  </div>
+    <div class="card">
+      <img src="atta.jpg">
+      <h4>Aata 5kg</h4>
+      <p>₹250</p>
+      <button onclick="addItem('Aata 5kg',250)">Add</button>
+    </div>
 
-  <div class="card">
-    <img src="https://i.imgur.com/8zQZ5ZQ.png">
-    <h3>Oil 1L</h3>
-    <p>₹180</p>
-    <button onclick="addItem('Oil 1L',180)">Add</button>
+    <div class="card">
+      <img src="atta.jpg">
+      <h4>Rice 5kg</h4>
+      <p>₹300</p>
+      <button onclick="addItem('Rice 5kg',300)">Add</button>
+    </div>
+
+    <div class="card">
+      <img src="oil.jpg">
+      <h4>Oil 1L</h4>
+      <p>₹180</p>
+      <button onclick="addItem('Oil 1L',180)">Add</button>
+    </div>
+
   </div>
 </div>
 
-<div class="footer">
-<div class="total">Total: ₹<span id="total">0</span></div>
-<button class="upi" onclick="payUPI()">Pay via UPI</button>
-<button class="wa" onclick="sendWhatsApp()">Order on WhatsApp</button>
+<div class="section">
+  <div class="total">Total: ₹<span id="total">0</span></div>
+
+  <button class="pay upi" onclick="payUPI()">Pay via UPI</button>
+  <button class="pay wa" onclick="orderWhatsApp()">Order on WhatsApp</button>
 </div>
 
 <script>
-let cart={},total=0;
+let cart=[];
+let total=0;
 
 function addItem(name,price){
- if(cart[name]){cart[name].qty++}else{cart[name]={price:price,qty:1}}
- total+=price;
- document.getElementById("total").innerText=total;
+  cart.push({name,price});
+  total+=price;
+  document.getElementById("total").innerText=total;
 }
 
-function getCustomer(){
- return{
-  name:cname.value.trim(),
-  mobile:cmobile.value.trim(),
-  address:caddress.value.trim()
- }
+function orderWhatsApp(){
+  let name=cname.value.trim();
+  let mobile=cmobile.value.trim();
+  let address=caddress.value.trim();
+
+  if(!name || !mobile || !address){
+    alert("Please fill customer details");
+    return;
+  }
+
+  let msg="🛒 *RAJU ENTERPRISES ORDER*%0A%0A";
+  cart.forEach(i=>{
+    msg+=`• ${i.name} - ₹${i.price}%0A`;
+  });
+  msg+=`%0A*Total: ₹${total}*%0A%0A`;
+  msg+=`👤 ${name}%0A📞 ${mobile}%0A🏠 ${address}`;
+
+  window.open(
+    "https://wa.me/919631699196?text="+msg,
+    "_blank"
+  );
 }
 
 function payUPI(){
- let c=getCustomer();
- if(!c.name||!c.mobile){alert("Customer details zaroori hai");return;}
- if(total===0){alert("Item add karo");return;}
-
- let upi="upi://pay?pa=96316991969631@ibl&pn=RAJU%20ENTERPRISES&am="+total+"&cu=INR";
- window.location.href=upi;
-}
-
-function sendWhatsApp(){
- let c=getCustomer();
- if(!c.name||!c.mobile){alert("Customer details zaroori hai");return;}
- if(total===0){alert("Item add karo");return;}
-
- let msg="🛒 *RAJU ENTERPRISES ORDER*\\n\\n";
- msg+="Name: "+c.name+"\\nMobile: "+c.mobile+"\\nAddress: "+c.address+"\\n\\n";
-
- for(let i in cart){
-  msg+=i+" x "+cart[i].qty+" = ₹"+(cart[i].price*cart[i].qty)+"\\n";
- }
- msg+="\\nTotal: ₹"+total;
-
- window.open("https://wa.me/919631699196?text="+encodeURIComponent(msg));
-}
-
-if("serviceWorker"in navigator){
- navigator.serviceWorker.register("service-worker.js");
+  if(total===0){
+    alert("Please add items");
+    return;
+  }
+  let upi=
+    "upi://pay?pa=96316991969631@ibl"+
+    "&pn=Raju%20Enterprises"+
+    "&am="+total+
+    "&cu=INR";
+  window.location.href=upi;
 }
 </script>
 
 </body>
-</html>
+                               </html>
