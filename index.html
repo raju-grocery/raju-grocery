@@ -1,75 +1,88 @@
-<!DOCTYPE html><html lang="hi">
+<!DOCTYPE html>
+<html lang="hi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Raju Enterprises Grocery</title>  <!-- PWA -->  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#2e7d32" />  <style>
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f4f4}
-    header{background:#2e7d32;color:#fff;padding:15px;text-align:center}
-    .section{background:#fff;margin:12px;padding:12px;border-radius:10px}
-    .section input,.section textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:6px}
-    .container{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-    .card{background:#fff;border-radius:12px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.1)}
-    .card img{width:100%;height:130px;object-fit:contain}
-    .card button{background:#2e7d32;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer}
-    .footer{position:fixed;bottom:0;width:100%;background:#fff;padding:10px;box-shadow:0 -2px 6px rgba(0,0,0,.1)}
-    .pay{background:#ff9800;color:#fff;width:100%;padding:10px;border:none;border-radius:6px;margin-bottom:6px}
-    .wa{background:#25d366;color:#fff;width:100%;padding:10px;border:none;border-radius:6px}
-    .admin{display:none}
-  </style></head>
-<body><header>
-  <h2>RAJU ENTERPRISES</h2>
-  <div>Grocery Store · Pincode 122051</div>
-</header><div class="section">
-  <h3>Customer Details</h3>
-  <input id="cname" placeholder="Customer Name" />
-  <input id="cmobile" placeholder="Mobile Number" />
-  <textarea id="caddress" placeholder="Address"></textarea>
-</div><div class="section">
-  <div class="container">
-    <div class="card">
-      <img src="images/aata.png" onerror="this.src='aata.png'" />
-      <h4>Aata 5kg</h4>
-      <div>₹250</div>
-      <button onclick="addItem('Aata 5kg',250)">Add</button>
-    </div>
-    <div class="card">
-      <img src="images/rice.png" onerror="this.src='atta.jpg'" />
-      <h4>Rice 5kg</h4>
-      <div>₹300</div>
-      <button onclick="addItem('Rice 5kg',300)">Add</button>
-    </div>
-    <div class="card">
-      <img src="images/oil.png" onerror="this.src='oil.jpg'" />
-      <h4>Oil 1L</h4>
-      <div>₹180</div>
-      <button onclick="addItem('Oil 1L',180)">Add</button>
-    </div>
-  </div>
-</div><div style="height:160px"></div><div class="footer">
-  <strong>Total: ₹<span id="total">0</span></strong>
-  <button class="pay" onclick="payUPI()">Pay via UPI</button>
-  <button class="wa" onclick="orderWhatsApp()">Order on WhatsApp</button>
-</div><script>
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAJU ENTERPRISES – Grocery Store</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f4f4}
+header{background:#2e7d32;color:#fff;padding:15px;text-align:center}
+.section{background:#fff;margin:10px;padding:12px;border-radius:8px}
+.container{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.card{border:1px solid #ddd;border-radius:8px;padding:8px;text-align:center;background:#fff}
+.card img{width:100%;height:120px;object-fit:contain}
+.card button{background:#2e7d32;color:#fff;border:none;padding:6px 10px;border-radius:5px;cursor:pointer}
+.footer{position:fixed;bottom:0;left:0;width:100%;background:#fff;padding:10px;box-shadow:0 -2px 6px rgba(0,0,0,.2)}
+.pay{background:orange;color:#fff;width:100%;padding:10px;border:none;border-radius:6px;margin-bottom:5px}
+.wa{background:#25D366;color:#fff;width:100%;padding:10px;border:none;border-radius:6px}
+</style>
+</head>
+<body>
+<header>
+<h2>RAJU ENTERPRISES</h2>
+<div>Grocery Store · Pincode 122051</div>
+</header>
 
-  function addItem(name, price){
-    cart.push({name, price});
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateTotal();
-  }
+<div class="section">
+<h3>Customer Details</h3>
+<input id="cname" placeholder="Customer Name" style="width:100%;margin-bottom:6px" />
+<input id="cmobile" placeholder="Mobile Number" style="width:100%;margin-bottom:6px" />
+<textarea id="caddress" placeholder="Address" style="width:100%"></textarea>
+</div>
 
-  function updateTotal(){
-    let t = cart.reduce((s,i)=>s+i.price,0);
-    document.getElementById('total').innerText = t;
-  }
+<div class="section">
+<div class="container">
 
-  function payUPI(){
-    let amount = document.getElementById('total').innerText;
-    if(amount==0){alert('Add item first');return;}
-    let upi = `upi://pay?pa=YOURUPIID@upi&pn=Raju%20Enterprises&am=${amount}&cu=INR`;
-    window.location.href = upi;
-  }
+<!-- सिर्फ photo rename करके upload करना है -->
+<div class="card"><img src="aata.png"><h4>Aata 5kg</h4><div>₹250</div><button onclick="addItem('Aata 5kg',250)">Add</button></div>
+<div class="card"><img src="rice.png"><h4>Rice 5kg</h4><div>₹300</div><button onclick="addItem('Rice 5kg',300)">Add</button></div>
+<div class="card"><img src="oil.png"><h4>Oil 1L</h4><div>₹180</div><button onclick="addItem('Oil 1L',180)">Add</button></div>
+<div class="card"><img src="sugar.png"><h4>Sugar 1kg</h4><div>₹45</div><button onclick="addItem('Sugar 1kg',45)">Add</button></div>
+<div class="card"><img src="salt.png"><h4>Salt 1kg</h4><div>₹20</div><button onclick="addItem('Salt 1kg',20)">Add</button></div>
+<div class="card"><img src="tea.png"><h4>Tea 250g</h4><div>₹120</div><button onclick="addItem('Tea 250g',120)">Add</button></div>
+<div class="card"><img src="coffee.png"><h4>Coffee 200g</h4><div>₹180</div><button onclick="addItem('Coffee 200g',180)">Add</button></div>
+<div class="card"><img src="dal.png"><h4>Dal 1kg</h4><div>₹140</div><button onclick="addItem('Dal 1kg',140)">Add</button></div>
+<div class="card"><img src="besan.png"><h4>Besan 1kg</h4><div>₹90</div><button onclick="addItem('Besan 1kg',90)">Add</button></div>
+<div class="card"><img src="poha.png"><h4>Poha 1kg</h4><div>₹60</div><button onclick="addItem('Poha 1kg',60)">Add</button></div>
+<div class="card"><img src="atta10.png"><h4>Aata 10kg</h4><div>₹480</div><button onclick="addItem('Aata 10kg',480)">Add</button></div>
+<div class="card"><img src="rice10.png"><h4>Rice 10kg</h4><div>₹580</div><button onclick="addItem('Rice 10kg',580)">Add</button></div>
+<div class="card"><img src="ghee.png"><h4>Ghee 500g</h4><div>₹280</div><button onclick="addItem('Ghee 500g',280)">Add</button></div>
+<div class="card"><img src="soap.png"><h4>Soap</h4><div>₹35</div><button onclick="addItem('Soap',35)">Add</button></div>
+<div class="card"><img src="shampoo.png"><h4>Shampoo</h4><div>₹120</div><button onclick="addItem('Shampoo',120)">Add</button></div>
+<div class="card"><img src="biscuit.png"><h4>Biscuit</h4><div>₹30</div><button onclick="addItem('Biscuit',30)">Add</button></div>
+<div class="card"><img src="namkeen.png"><h4>Namkeen</h4><div>₹50</div><button onclick="addItem('Namkeen',50)">Add</button></div>
+<div class="card"><img src="masala.png"><h4>Masala</h4><div>₹70</div><button onclick="addItem('Masala',70)">Add</button></div>
+<div class="card"><img src="bread.png"><h4>Bread</h4><div>₹40</div><button onclick="addItem('Bread',40)">Add</button></div>
+<div class="card"><img src="milk.png"><h4>Milk</h4><div>₹30</div><button onclick="addItem('Milk',30)">Add</button></div>
 
-  function orderWhatsApp(){
-    let name = cname.value
+</div>
+</div>
+
+<div style="height:160px"></div>
+
+<div class="footer">
+<strong>Total: ₹<span id="total">0</span> | Quantity: <span id="qty">0</span></strong>
+<button class="pay" onclick="payUPI()">Pay via UPI</button>
+<button class="wa" onclick="orderWhatsApp()">Order on WhatsApp</button>
+</div>
+
+<script>
+let cart = [];
+function addItem(name, price){cart.push({name,price});update();}
+function update(){
+ document.getElementById('qty').innerText = cart.length;
+ document.getElementById('total').innerText = cart.reduce((s,i)=>s+i.price,0);
+}
+function payUPI(){
+ let amt=document.getElementById('total').innerText;
+ if(amt==0)return alert('Add item first');
+ location.href=`upi://pay?pa=YOURUPIID@upi&pn=RAJU%20ENTERPRISES&am=${amt}&cu=INR`;
+}
+function orderWhatsApp(){
+ let msg='Order:%0A';cart.forEach(i=>msg+=i.name+' ₹'+i.price+'%0A');
+ msg+=`Total ₹${document.getElementById('total').innerText}`;
+ location.href=`https://wa.me/91XXXXXXXXXX?text=${msg}`;
+}
+</script>
+</body>
+  </html>
