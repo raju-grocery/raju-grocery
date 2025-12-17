@@ -1,126 +1,75 @@
-<!DOCTYPE html>
-<html lang="hi">
+<!DOCTYPE html><html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Raju Enterprises Grocery</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raju Enterprises Grocery</title>  <!-- PWA -->  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2e7d32" />  <style>
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f4f4}
+    header{background:#2e7d32;color:#fff;padding:15px;text-align:center}
+    .section{background:#fff;margin:12px;padding:12px;border-radius:10px}
+    .section input,.section textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:6px}
+    .container{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+    .card{background:#fff;border-radius:12px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+    .card img{width:100%;height:130px;object-fit:contain}
+    .card button{background:#2e7d32;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer}
+    .footer{position:fixed;bottom:0;width:100%;background:#fff;padding:10px;box-shadow:0 -2px 6px rgba(0,0,0,.1)}
+    .pay{background:#ff9800;color:#fff;width:100%;padding:10px;border:none;border-radius:6px;margin-bottom:6px}
+    .wa{background:#25d366;color:#fff;width:100%;padding:10px;border:none;border-radius:6px}
+    .admin{display:none}
+  </style></head>
+<body><header>
+  <h2>RAJU ENTERPRISES</h2>
+  <div>Grocery Store · Pincode 122051</div>
+</header><div class="section">
+  <h3>Customer Details</h3>
+  <input id="cname" placeholder="Customer Name" />
+  <input id="cmobile" placeholder="Mobile Number" />
+  <textarea id="caddress" placeholder="Address"></textarea>
+</div><div class="section">
+  <div class="container">
+    <div class="card">
+      <img src="images/aata.png" onerror="this.src='aata.png'" />
+      <h4>Aata 5kg</h4>
+      <div>₹250</div>
+      <button onclick="addItem('Aata 5kg',250)">Add</button>
+    </div>
+    <div class="card">
+      <img src="images/rice.png" onerror="this.src='atta.jpg'" />
+      <h4>Rice 5kg</h4>
+      <div>₹300</div>
+      <button onclick="addItem('Rice 5kg',300)">Add</button>
+    </div>
+    <div class="card">
+      <img src="images/oil.png" onerror="this.src='oil.jpg'" />
+      <h4>Oil 1L</h4>
+      <div>₹180</div>
+      <button onclick="addItem('Oil 1L',180)">Add</button>
+    </div>
+  </div>
+</div><div style="height:160px"></div><div class="footer">
+  <strong>Total: ₹<span id="total">0</span></strong>
+  <button class="pay" onclick="payUPI()">Pay via UPI</button>
+  <button class="wa" onclick="orderWhatsApp()">Order on WhatsApp</button>
+</div><script>
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-<!-- PWA -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2e7d32">
+  function addItem(name, price){
+    cart.push({name, price});
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateTotal();
+  }
 
-<style>
-body{margin:0;font-family:Arial;background:#f2f2f2}
-header{background:#2e7d32;color:#fff;padding:12px;text-align:center}
-.section{background:#fff;margin:12px;padding:12px;border-radius:10px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-.card{background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.1)}
-.card img{width:100%;height:120px;object-fit:contain}
-button{border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
-.add{background:#2e7d32;color:#fff}
-.qty button{background:#ddd}
-.total{font-size:18px;font-weight:bold}
-.pay{background:orange;color:#fff;width:100%;margin-top:6px}
-.wa{background:#25d366;color:#fff;width:100%;margin-top:6px}
-.hidden{display:none}
-</style>
-</head>
+  function updateTotal(){
+    let t = cart.reduce((s,i)=>s+i.price,0);
+    document.getElementById('total').innerText = t;
+  }
 
-<body>
+  function payUPI(){
+    let amount = document.getElementById('total').innerText;
+    if(amount==0){alert('Add item first');return;}
+    let upi = `upi://pay?pa=YOURUPIID@upi&pn=Raju%20Enterprises&am=${amount}&cu=INR`;
+    window.location.href = upi;
+  }
 
-<header>
-<h2>RAJU ENTERPRISES</h2>
-<small>Grocery Store • Pincode 122051</small>
-</header>
-
-<div class="section">
-<h3>Customer Details</h3>
-<input id="cname" placeholder="Name" style="width:100%;margin:4px">
-<input id="cmobile" placeholder="Mobile" style="width:100%;margin:4px">
-<textarea id="caddress" placeholder="Address" style="width:100%;margin:4px"></textarea>
-</div>
-
-<div class="section grid" id="products"></div>
-
-<div class="section">
-<div class="total">Total: ₹<span id="total">0</span></div>
-<button class="pay" onclick="payUPI()">Pay via UPI</button>
-<button class="wa" onclick="orderWA()">Order on WhatsApp</button>
-</div>
-
-<div class="section">
-<button onclick="toggleAdmin()">Admin Panel</button>
-<div id="admin" class="hidden">
-<h3>Admin (Password: 1234)</h3>
-<button onclick="clearOrders()">Clear Order History</button>
-</div>
-</div>
-
-<script>
-const items=[
- {id:1,name:"Aata 5kg",price:250,img:"aata.png"},
- {id:2,name:"Rice 5kg",price:300,img:"atta.jpg"},
- {id:3,name:"Oil 1L",price:180,img:"oil.jpg"}
-];
-
-let cart=JSON.parse(localStorage.getItem("cart")||"{}");
-
-function render(){
- let p="";
- let total=0;
- items.forEach(i=>{
-  let q=cart[i.id]||0;
-  total+=q*i.price;
-  p+=`
-  <div class="card">
-   <img src="${i.img}">
-   <h4>${i.name}</h4>
-   ₹${i.price}
-   <div class="qty">
-    <button onclick="chg(${i.id},-1)">-</button>
-    ${q}
-    <button onclick="chg(${i.id},1)">+</button>
-   </div>
-  </div>`;
- });
- document.getElementById("products").innerHTML=p;
- document.getElementById("total").innerText=total;
- localStorage.setItem("cart",JSON.stringify(cart));
-}
-function chg(id,v){cart[id]=(cart[id]||0)+v;if(cart[id]<0)cart[id]=0;render()}
-render();
-
-function payUPI(){
- let amt=document.getElementById("total").innerText;
- if(amt==0)return alert("Cart empty");
- location.href=`upi://pay?pa=yourupi@upi&pn=RajuGrocery&am=${amt}&cu=INR`;
- saveOrder();
-}
-
-function orderWA(){
- let msg=`Order:%0A`;
- items.forEach(i=>{if(cart[i.id])msg+=`${i.name} x ${cart[i.id]}%0A`});
- msg+=`Total ₹${document.getElementById("total").innerText}`;
- window.open("https://wa.me/91XXXXXXXXXX?text="+msg);
- saveOrder();
-}
-
-function saveOrder(){
- let orders=JSON.parse(localStorage.getItem("orders")||"[]");
- orders.push({date:new Date().toLocaleString(),cart});
- localStorage.setItem("orders",JSON.stringify(orders));
-}
-
-function toggleAdmin(){
- let p=prompt("Admin Password");
- if(p==="1234")document.getElementById("admin").classList.toggle("hidden");
-}
-
-function clearOrders(){
- localStorage.removeItem("orders");
- alert("Order history cleared");
-}
-</script>
-
-</body>
-</html>
+  function orderWhatsApp(){
+    let name = cname.value
