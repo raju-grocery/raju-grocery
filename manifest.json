@@ -1,20 +1,20 @@
 {
   "name": "Raju Enterprises Grocery",
   "short_name": "Raju Grocery",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#2e7d32",
   "theme_color": "#2e7d32",
   "icons": [
     {
-      "src": "raju.jpg",
+      "src": "https://i.imgur.com/5ZQZ5ZQ.png",
       "sizes": "192x192",
-      "type": "image/jpeg"
+      "type": "image/png"
     },
     {
-      "src": "raju.jpg",
+      "src": "https://i.imgur.com/5ZQZ5ZQ.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png"
     }
   ]
 }
