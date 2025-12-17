@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RAJU ENTERPRISES</title>
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2e7d32">
+
 <style>
 body{font-family:Arial;margin:0;background:#f5f5f5}
 header{background:#2e7d32;color:#fff;text-align:center;padding:15px}
@@ -12,10 +15,10 @@ header{background:#2e7d32;color:#fff;text-align:center;padding:15px}
 .card{background:#fff;padding:10px;border-radius:10px;text-align:center}
 .card img{width:100px;height:100px}
 button{background:#2e7d32;color:#fff;border:none;padding:8px 12px;border-radius:5px}
-.cart{background:#fff;margin:10px;padding:10px;border-radius:10px}
+.cart,.history{background:#fff;margin:10px;padding:10px;border-radius:10px}
 .pay-btn{display:block;background:#ff6f00;color:#fff;text-align:center;
 padding:12px;border-radius:8px;text-decoration:none;font-weight:bold;margin-top:10px}
-.history{background:#fff;margin:10px;padding:10px;border-radius:10px}
+.whatsapp{background:#25D366!important}
 </style>
 </head>
 
@@ -59,6 +62,12 @@ padding:12px;border-radius:8px;text-decoration:none;font-weight:bold;margin-top:
      href="upi://pay?pa=96316991969631@ibl&pn=RAJU%20ENTERPRISES&cu=INR">
      Pay via UPI
   </a>
+
+  <a class="pay-btn whatsapp"
+     href="#"
+     onclick="sendWhatsAppOrder()">
+     Order on WhatsApp
+  </a>
 </div>
 
 <div class="history">
@@ -91,7 +100,29 @@ function showHistory(){
   });
   document.getElementById("history").innerHTML = html || "No orders yet";
 }
+
+function sendWhatsAppOrder(){
+  if(orders.length === 0){
+    alert("Please add items first");
+    return;
+  }
+
+  let msg = "🛒 *RAJU ENTERPRISES ORDER* %0A%0A";
+  orders.forEach(o=>{
+    msg += "• " + o.item + " - ₹" + o.price + "%0A";
+  });
+  msg += "%0A*Total: ₹" + total + "*";
+
+  window.open(
+    "https://wa.me/919631699196?text=" + msg,
+    "_blank"
+  );
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
 </script>
 
 </body>
-  </html>
+</html>
