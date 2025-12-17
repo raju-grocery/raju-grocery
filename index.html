@@ -1,180 +1,121 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Raju Enterprises Grocery</title>
+<title>Raju Grocery Admin App</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2e7d32">
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-body{margin:0;font-family:Arial;background:#f2f2f2}
-header{
-  background:#2e7d32;color:#fff;
-  text-align:center;padding:15px
-}
-header img{
-  width:90px;height:90px;
-  border-radius:50%;
-  border:3px solid #fff;
-  object-fit:cover
-}
-
-.section{
-  background:#fff;
-  margin:12px;
-  padding:12px;
-  border-radius:10px
-}
-.section input,.section textarea{
-  width:100%;
-  padding:10px;
-  margin:6px 0;
-  border-radius:6px;
-  border:1px solid #ccc
-}
-
-.products{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:12px
-}
-.card{
-  background:#fff;
-  padding:10px;
-  border-radius:12px;
-  text-align:center;
-  box-shadow:0 2px 6px rgba(0,0,0,.1)
-}
-.card img{
-  width:100%;
-  height:130px;
-  object-fit:contain
-}
-.card button{
-  background:#2e7d32;
-  color:#fff;
-  border:none;
-  padding:8px 14px;
-  border-radius:6px
-}
-
-.total{
-  font-size:20px;
-  font-weight:bold;
-  padding:10px
-}
-
-.pay{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:8px;
-  font-size:16px;
-  margin:6px 0
-}
-.upi{background:orange;color:#fff}
-.wa{background:#25D366;color:#fff}
+body{font-family:Arial;margin:0;background:#f4f4f4}
+header{background:#2e7d32;color:#fff;text-align:center;padding:15px}
+section{background:#fff;margin:10px;padding:10px;border-radius:10px}
+input,textarea{width:100%;padding:8px;margin:5px 0}
+button{padding:10px;border:none;border-radius:6px;margin-top:5px}
+.green{background:#2e7d32;color:#fff}
+.orange{background:orange;color:#fff}
+.admin{background:#000;color:#fff}
+.card{border:1px solid #ddd;padding:10px;margin:5px;border-radius:8px}
 </style>
 </head>
 
 <body>
 
 <header>
-  <img src="profile.jpg">
-  <h2>RAJU ENTERPRISES</h2>
-  <p>Grocery Store · Pincode 122051</p>
+<h2>RAJU ENTERPRISES</h2>
+<p>Online Grocery App</p>
 </header>
 
-<div class="section">
-  <h3>Customer Details</h3>
-  <input id="cname" placeholder="Customer Name">
-  <input id="cmobile" placeholder="Mobile Number">
-  <textarea id="caddress" placeholder="Full Address"></textarea>
-</div>
+<section>
+<h3>Customer Details</h3>
+<input id="name" placeholder="Name">
+<input id="mobile" placeholder="Mobile">
+<textarea id="address" placeholder="Address"></textarea>
+</section>
 
-<div class="section">
-  <h3>Products</h3>
-  <div class="products">
+<section>
+<h3>Order Items</h3>
+<input id="item" placeholder="Item Name">
+<input id="price" placeholder="Price">
+<input id="qty" placeholder="Quantity">
+<button class="green" onclick="addItem()">Add Item</button>
+<div id="cart"></div>
+<h3>Total ₹<span id="total">0</span></h3>
+<button class="orange" onclick="payUPI()">Pay via UPI</button>
+<button class="green" onclick="placeOrder()">Place Order</button>
+</section>
 
-    <div class="card">
-      <img src="atta.jpg">
-      <h4>Aata 5kg</h4>
-      <p>₹250</p>
-      <button onclick="addItem('Aata 5kg',250)">Add</button>
-    </div>
-
-    <div class="card">
-      <img src="atta.jpg">
-      <h4>Rice 5kg</h4>
-      <p>₹300</p>
-      <button onclick="addItem('Rice 5kg',300)">Add</button>
-    </div>
-
-    <div class="card">
-      <img src="oil.jpg">
-      <h4>Oil 1L</h4>
-      <p>₹180</p>
-      <button onclick="addItem('Oil 1L',180)">Add</button>
-    </div>
-
-  </div>
-</div>
-
-<div class="section">
-  <div class="total">Total: ₹<span id="total">0</span></div>
-
-  <button class="pay upi" onclick="payUPI()">Pay via UPI</button>
-  <button class="pay wa" onclick="orderWhatsApp()">Order on WhatsApp</button>
-</div>
+<section>
+<h3>Admin Panel</h3>
+<button class="admin" onclick="adminLogin()">Open Admin Dashboard</button>
+<div id="admin"></div>
+</section>
 
 <script>
+// 🔥 Firebase config (CHANGE THIS)
+var firebaseConfig = {
+ apiKey: "YOUR_API_KEY",
+ authDomain: "YOUR_PROJECT.firebaseapp.com",
+ databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+ projectId: "YOUR_PROJECT",
+ storageBucket: "YOUR_PROJECT.appspot.com",
+ messagingSenderId: "XXXX",
+ appId: "XXXX"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
 let cart=[];
-let total=0;
-
-function addItem(name,price){
-  cart.push({name,price});
-  total+=price;
-  document.getElementById("total").innerText=total;
+function addItem(){
+ let i=item.value,p=price.value,q=qty.value;
+ if(!i||!p||!q)return alert("Fill all");
+ cart.push({i,p,q});
+ render();
 }
-
-function orderWhatsApp(){
-  let name=cname.value.trim();
-  let mobile=cmobile.value.trim();
-  let address=caddress.value.trim();
-
-  if(!name || !mobile || !address){
-    alert("Please fill customer details");
-    return;
-  }
-
-  let msg="🛒 *RAJU ENTERPRISES ORDER*%0A%0A";
-  cart.forEach(i=>{
-    msg+=`• ${i.name} - ₹${i.price}%0A`;
-  });
-  msg+=`%0A*Total: ₹${total}*%0A%0A`;
-  msg+=`👤 ${name}%0A📞 ${mobile}%0A🏠 ${address}`;
-
-  window.open(
-    "https://wa.me/919631699196?text="+msg,
-    "_blank"
-  );
+function render(){
+ let t=0,html="";
+ cart.forEach(x=>{
+  t+=x.p*x.q;
+  html+=`<div class="card">${x.i} | ₹${x.p} x ${x.q}</div>`;
+ });
+ cart.innerHTML=html;
+ total.innerText=t;
 }
-
 function payUPI(){
-  if(total===0){
-    alert("Please add items");
-    return;
+ let t=total.innerText;
+ location.href=`upi://pay?pa=96316991969631@ibl&pn=Raju%20Store&am=${t}&cu=INR`;
+}
+function placeOrder(){
+ let order={
+  name:name.value,
+  mobile:mobile.value,
+  address:address.value,
+  items:cart,
+  total:total.innerText,
+  time:new Date().toLocaleString()
+ };
+ db.ref("orders").push(order);
+ alert("Order Saved in Firebase");
+ cart=[]; render();
+}
+function adminLogin(){
+ let p=prompt("Admin Password");
+ if(p!=="1234")return alert("Wrong password");
+ db.ref("orders").on("value",s=>{
+  let d=s.val(),html="<h4>All Orders</h4>";
+  for(let k in d){
+   html+=`<div class="card">
+   ${d[k].name} | ₹${d[k].total}<br>
+   ${d[k].mobile}<br>${d[k].address}
+   </div>`;
   }
-  let upi=
-    "upi://pay?pa=96316991969631@ibl"+
-    "&pn=Raju%20Enterprises"+
-    "&am="+total+
-    "&cu=INR";
-  window.location.href=upi;
+  admin.innerHTML=html;
+ });
 }
 </script>
 
 </body>
-                               </html>
+  </html>
