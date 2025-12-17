@@ -2,125 +2,121 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RAJU ENTERPRISES</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raju Enterprises Grocery</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#2e7d32">
 
 <style>
-body{font-family:Arial;margin:0;background:#f5f5f5}
-header{background:#2e7d32;color:#fff;text-align:center;padding:15px}
-.products{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
-.card{background:#fff;padding:10px;border-radius:10px;text-align:center}
-.card img{width:100px;height:100px}
-button{background:#2e7d32;color:#fff;border:none;padding:8px 12px;border-radius:5px}
-.cart,.history{background:#fff;margin:10px;padding:10px;border-radius:10px}
-.pay-btn{display:block;background:#ff6f00;color:#fff;text-align:center;
-padding:12px;border-radius:8px;text-decoration:none;font-weight:bold;margin-top:10px}
-.whatsapp{background:#25D366!important}
+body{margin:0;font-family:Arial;background:#f2f2f2}
+header{background:#2e7d32;color:#fff;padding:15px;text-align:center;font-size:20px}
+
+.section{background:#fff;margin:15px;padding:15px;border-radius:12px}
+.section input,.section textarea{width:100%;padding:8px;margin-bottom:8px;border-radius:6px;border:1px solid #ccc}
+
+.container{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;padding:15px}
+.card{background:#fff;border-radius:12px;padding:10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+.card img{width:100%;height:120px;object-fit:contain}
+.card h3{margin:8px 0 4px}
+.card p{margin:5px 0;font-weight:bold}
+
+button{background:#2e7d32;color:#fff;border:none;padding:8px 15px;border-radius:6px;cursor:pointer}
+
+.footer{position:sticky;bottom:0;background:#fff;padding:15px;box-shadow:0 -2px 6px rgba(0,0,0,.1)}
+.total{font-size:18px;font-weight:bold;margin-bottom:10px}
+.upi{background:#ff9800;width:100%;margin-bottom:8px}
+.wa{background:#25d366;width:100%}
 </style>
 </head>
 
 <body>
 
 <header>
-  <img src="raju.jpg" style="width:120px;border-radius:50%">
-  <h2>RAJU ENTERPRISES</h2>
-  <p>Grocery Store · Pincode 122051</p>
+RAJU ENTERPRISES<br>
+Grocery Store · Pincode 122051
 </header>
 
-<div class="products">
+<div class="section">
+<h3>Customer Details</h3>
+<input id="cname" placeholder="Customer Name">
+<input id="cmobile" placeholder="Mobile Number">
+<textarea id="caddress" placeholder="Address"></textarea>
+</div>
 
+<div class="container">
   <div class="card">
-    <img src="atta.jpg">
-    <h4>Aata 5kg</h4>
+    <img src="https://i.imgur.com/5ZQZ5ZQ.png">
+    <h3>Aata 5kg</h3>
     <p>₹250</p>
     <button onclick="addItem('Aata 5kg',250)">Add</button>
   </div>
 
   <div class="card">
-    <img src="rice.jpg">
-    <h4>Rice 5kg</h4>
+    <img src="https://i.imgur.com/Vx1cQZ6.png">
+    <h3>Rice 5kg</h3>
     <p>₹300</p>
     <button onclick="addItem('Rice 5kg',300)">Add</button>
   </div>
 
   <div class="card">
-    <img src="oil.jpg">
-    <h4>Oil 1L</h4>
+    <img src="https://i.imgur.com/8zQZ5ZQ.png">
+    <h3>Oil 1L</h3>
     <p>₹180</p>
     <button onclick="addItem('Oil 1L',180)">Add</button>
   </div>
-
 </div>
 
-<div class="cart">
-  <h3>Total: ₹<span id="total">0</span></h3>
-
-  <a class="pay-btn"
-     href="upi://pay?pa=96316991969631@ibl&pn=RAJU%20ENTERPRISES&cu=INR">
-     Pay via UPI
-  </a>
-
-  <a class="pay-btn whatsapp"
-     href="#"
-     onclick="sendWhatsAppOrder()">
-     Order on WhatsApp
-  </a>
-</div>
-
-<div class="history">
-  <h3>My Order History</h3>
-  <button onclick="showHistory()">Show Orders</button>
-  <div id="history"></div>
+<div class="footer">
+<div class="total">Total: ₹<span id="total">0</span></div>
+<button class="upi" onclick="payUPI()">Pay via UPI</button>
+<button class="wa" onclick="sendWhatsApp()">Order on WhatsApp</button>
 </div>
 
 <script>
-let total = 0;
-let orders = JSON.parse(localStorage.getItem("orders")) || [];
+let cart={},total=0;
 
-function addItem(name, price){
-  total += price;
-  document.getElementById("total").innerText = total;
-
-  orders.push({
-    item:name,
-    price:price,
-    time:new Date().toLocaleString()
-  });
-
-  localStorage.setItem("orders", JSON.stringify(orders));
+function addItem(name,price){
+ if(cart[name]){cart[name].qty++}else{cart[name]={price:price,qty:1}}
+ total+=price;
+ document.getElementById("total").innerText=total;
 }
 
-function showHistory(){
-  let html = "";
-  orders.forEach(o=>{
-    html += o.item + " - ₹" + o.price + " (" + o.time + ")<br>";
-  });
-  document.getElementById("history").innerHTML = html || "No orders yet";
+function getCustomer(){
+ return{
+  name:cname.value.trim(),
+  mobile:cmobile.value.trim(),
+  address:caddress.value.trim()
+ }
 }
 
-function sendWhatsAppOrder(){
-  if(orders.length === 0){
-    alert("Please add items first");
-    return;
-  }
+function payUPI(){
+ let c=getCustomer();
+ if(!c.name||!c.mobile){alert("Customer details zaroori hai");return;}
+ if(total===0){alert("Item add karo");return;}
 
-  let msg = "🛒 *RAJU ENTERPRISES ORDER* %0A%0A";
-  orders.forEach(o=>{
-    msg += "• " + o.item + " - ₹" + o.price + "%0A";
-  });
-  msg += "%0A*Total: ₹" + total + "*";
-
-  window.open(
-    "https://wa.me/919631699196?text=" + msg,
-    "_blank"
-  );
+ let upi="upi://pay?pa=96316991969631@ibl&pn=RAJU%20ENTERPRISES&am="+total+"&cu=INR";
+ window.location.href=upi;
 }
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
+function sendWhatsApp(){
+ let c=getCustomer();
+ if(!c.name||!c.mobile){alert("Customer details zaroori hai");return;}
+ if(total===0){alert("Item add karo");return;}
+
+ let msg="🛒 *RAJU ENTERPRISES ORDER*\\n\\n";
+ msg+="Name: "+c.name+"\\nMobile: "+c.mobile+"\\nAddress: "+c.address+"\\n\\n";
+
+ for(let i in cart){
+  msg+=i+" x "+cart[i].qty+" = ₹"+(cart[i].price*cart[i].qty)+"\\n";
+ }
+ msg+="\\nTotal: ₹"+total;
+
+ window.open("https://wa.me/919631699196?text="+encodeURIComponent(msg));
+}
+
+if("serviceWorker"in navigator){
+ navigator.serviceWorker.register("service-worker.js");
 }
 </script>
 
